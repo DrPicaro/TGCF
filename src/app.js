@@ -1,14 +1,55 @@
 import data from './data/annex-ii.json' with { type: 'json' };
-import { ageBandIndex, calculateScore, evaluate, minimumMarkForPoints, normalizeAgilityTenths } from './calculator.js';
-import { formatAgility, formatDuration, parseDuration } from './formatters.js';
+import { ageBandIndex, calculateScore, minimumMarkForPoints, normalizeAgilityTenths } from './calculator.js';
+import { formatAgility, formatDuration } from './formatters.js';
+import { durationFromParts, durationToParts } from './time-inputs.js';
+import { loadState, saveState } from './storage.js';
+import { buildShareText } from './share.js';
 
 const $ = selector => document.querySelector(selector);
 const tests = data.tests;
-const inputs = { flex: $('#flex'), plank: $('#plank'), run: $('#run'), agility: $('#agility') };
 const ageBands = ['17–25 años', '26–30 años', '31–35 años', '36–40 años', '41–45 años', '46–50 años', '51–55 años', '56–59 años', '60 o más'];
 let mode = 'mine';
 let savedMarks = null;
 let simulated = false;
+let latestReport = { complete: false, status: 'PENDIENTE', average: null, results: {} };
+
+const controls = {
+  flex: {
+    fields: [$('#flex')],
+    read: () => $('#flex').value === '' ? null : Number($('#flex').value),
+    write: mark => { $('#flex').value = mark ?? ''; },
+    state: () => $('#flex').value,
+    restore: value => { $('#flex').value = value ?? ''; },
+  },
+  plank: durationControl('plank'),
+  run: durationControl('run'),
+  agility: {
+    fields: [$('#agility')],
+    read: () => $('#agility').value === '' ? null : Number($('#agility').value),
+    write: mark => { $('#agility').value = mark === null || mark === undefined ? '' : (mark / 10).toFixed(1); },
+    state: () => $('#agility').value,
+    restore: value => { $('#agility').value = value ?? ''; },
+  },
+};
+
+function durationControl(key) {
+  const minutes = $(`#${key}-minutes`);
+  const seconds = $(`#${key}-seconds`);
+  return {
+    fields: [minutes, seconds],
+    read: () => durationFromParts(minutes.value, seconds.value),
+    write: mark => {
+      const parts = durationToParts(mark);
+      minutes.value = parts.minutes;
+      seconds.value = parts.seconds;
+    },
+    state: () => ({ minutes: minutes.value, seconds: seconds.value }),
+    restore: value => {
+      minutes.value = value?.minutes ?? '';
+      seconds.value = value?.seconds ?? '';
+    },
+  };
+}
 
 const ageSelect = $('#age');
 for (let age = 17; age <= 59; age += 1) {
@@ -22,15 +63,37 @@ age60Plus.value = '60';
 age60Plus.textContent = '60 o más';
 ageSelect.append(age60Plus);
 ageSelect.value = '30';
+restoreSavedState();
 
 function profile() {
-  const age = Number($('#age').value);
+  const age = Number(ageSelect.value);
   return { age: Number.isFinite(age) ? age : 17, sex: $('#sex').value };
 }
 
+function marksState() {
+  return Object.fromEntries(Object.entries(controls).map(([key, control]) => [key, control.state()]));
+}
+
+function restoreMarks(marks) {
+  Object.entries(controls).forEach(([key, control]) => control.restore(marks?.[key]));
+}
+
+function persistState() {
+  if (mode !== 'mine') return;
+  const { sex, age } = profile();
+  saveState(window.localStorage, { sex, age: String(age), marks: marksState() });
+}
+
+function restoreSavedState() {
+  const state = loadState(window.localStorage);
+  if (!state) return;
+  $('#sex').value = state.sex;
+  ageSelect.value = state.age;
+  restoreMarks(state.marks);
+}
+
 function rawValue(key) {
-  if (key === 'plank' || key === 'run') return parseDuration(inputs[key].value);
-  return inputs[key].value === '' ? null : Number(inputs[key].value);
+  return controls[key].read();
 }
 
 function displayMark(key, mark) {
@@ -38,12 +101,6 @@ function displayMark(key, mark) {
   if (key === 'plank' || key === 'run') return formatDuration(mark);
   if (key === 'agility') return formatAgility(mark);
   return `${mark} rep.`;
-}
-
-function inputMark(key, mark) {
-  if (key === 'plank' || key === 'run') return formatDuration(mark);
-  if (key === 'agility') return (mark / 10).toFixed(1);
-  return mark;
 }
 
 function targetFor(key) {
@@ -55,7 +112,7 @@ function differenceCopy(key, value, target) {
   if (value === null || target === null) return 'Sin marca';
   const higher = tests[key].direction === 'higher';
   const delta = higher ? value - target : target - value;
-  const amount = key === 'agility' ? formatAgility(Math.abs(delta)).replace(' s', ' s') : key === 'flex' ? `${Math.abs(delta)} rep.` : formatDuration(Math.abs(delta));
+  const amount = key === 'agility' ? formatAgility(Math.abs(delta)) : key === 'flex' ? `${Math.abs(delta)} rep.` : formatDuration(Math.abs(delta));
   if (delta > 0) return `Margen: ${amount}`;
   if (delta === 0) return 'En el corte';
   return `Faltan: ${amount}`;
@@ -73,7 +130,7 @@ function updateMetric(key) {
   const score = calculateScore(test, { age, sex, value: normalized });
   targetElement.textContent = displayMark(key, target);
   article.classList.toggle('is-not-applicable', score === null);
-  inputs[key].disabled = score === null;
+  controls[key].fields.forEach(field => { field.disabled = score === null; });
   if (score === null) {
     targetElement.textContent = 'No aplicable';
     resultElement.className = 'result';
@@ -82,7 +139,7 @@ function updateMetric(key) {
   }
   if (value === null || !Number.isFinite(value)) {
     resultElement.className = 'result';
-    resultElement.textContent = key === 'plank' || key === 'run' ? 'Usa min:seg' : 'Sin marca';
+    resultElement.textContent = key === 'plank' || key === 'run' ? 'Completa min. y seg.' : 'Sin marca';
     return { applicable: true, value: null, score: null, passed: false };
   }
   const passed = score >= 20;
@@ -95,24 +152,34 @@ function updateReport(results) {
   const applicable = Object.values(results).filter(item => item.applicable);
   const complete = applicable.length > 0 && applicable.every(item => item.score !== null);
   const status = $('#report-status');
+  const shareButton = $('#share-result');
+  const shareFeedback = $('#share-feedback');
   if (!complete) {
     status.className = 'report-status waiting';
     $('#status-word').textContent = mode === 'cut' ? 'CORTE' : 'PENDIENTE';
     $('#informe-title').textContent = mode === 'cut' ? 'Estas viendo tu corte de aptitud.' : 'Completa las marcas para obtener el resultado.';
     $('#report-detail').textContent = mode === 'cut' ? 'El corte general equivale a 20 puntos en cada prueba aplicable. Puedes usarlo como simulación o compararlo con tus marcas.' : 'La calificación de referencia exige al menos 20 puntos en cada prueba aplicable. La media no compensa una prueba inferior al corte.';
-    $('#average').textContent = '—'; $('#passed-count').textContent = '—';
-    return;
+    $('#average').textContent = '—';
+    $('#passed-count').textContent = '—';
+    shareButton.disabled = true;
+    shareFeedback.textContent = '';
+    return { complete: false, status: 'PENDIENTE', average: null, results };
   }
   const scores = applicable.map(item => item.score);
   const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
   const passedCount = applicable.filter(item => item.passed).length;
   const apto = passedCount === applicable.length;
+  const reportStatus = apto ? 'APTO' : 'NO APTO';
   status.className = `report-status ${apto ? 'apto' : 'no-apto'}`;
-  $('#status-word').textContent = apto ? 'APTO' : 'NO APTO';
+  $('#status-word').textContent = reportStatus;
   $('#informe-title').textContent = apto ? 'Superas el corte en todas las pruebas.' : 'Hay al menos una prueba por debajo del corte.';
   $('#report-detail').textContent = apto ? 'Buen trabajo: mantienes como mínimo 20 puntos en cada prueba aplicable.' : 'La media es informativa. Para ser apto debes alcanzar al menos 20 puntos en todas las pruebas aplicables.';
-  $('#average').textContent = average.toFixed(1).replace('.', ',');
+  const averageText = average.toFixed(1).replace('.', ',');
+  $('#average').textContent = averageText;
   $('#passed-count').textContent = `${passedCount}/${applicable.length}`;
+  shareButton.disabled = mode !== 'mine';
+  if (mode !== 'mine') shareFeedback.textContent = '';
+  return { complete: true, status: reportStatus, average: averageText, results };
 }
 
 function render() {
@@ -122,14 +189,11 @@ function render() {
   } catch { $('#age-band').textContent = 'Edad no válida'; }
   const results = Object.fromEntries(Object.keys(tests).map(key => [key, updateMetric(key)]));
   $('#agility-note').hidden = results.agility.applicable;
-  updateReport(results);
+  latestReport = updateReport(results);
 }
 
 function applyCut() {
-  Object.keys(inputs).forEach(key => {
-    const target = targetFor(key);
-    if (target !== null) inputs[key].value = inputMark(key, target);
-  });
+  Object.keys(controls).forEach(key => controls[key].write(targetFor(key)));
 }
 
 function updateModeControls() {
@@ -145,22 +209,28 @@ function updateModeControls() {
 
 function setMode(nextMode) {
   if (nextMode === mode) return;
-
   if (nextMode === 'cut') {
-    savedMarks = Object.fromEntries(Object.entries(inputs).map(([key, input]) => [key, input.value]));
+    savedMarks = marksState();
     simulated = true;
     mode = 'cut';
     applyCut();
   } else {
     mode = 'mine';
-    if (simulated && savedMarks) {
-      Object.entries(savedMarks).forEach(([key, value]) => { inputs[key].value = value; });
-    }
+    if (simulated && savedMarks) restoreMarks(savedMarks);
     simulated = false;
+    persistState();
   }
-
   updateModeControls();
   render();
+}
+
+function leaveCutAfterEdit(editedField) {
+  const editedValue = editedField.value;
+  mode = 'mine';
+  if (savedMarks) restoreMarks(savedMarks);
+  editedField.value = editedValue;
+  simulated = false;
+  updateModeControls();
 }
 
 function openBaremo(key) {
@@ -175,22 +245,49 @@ function openBaremo(key) {
   $('#baremo-dialog').showModal();
 }
 
-Object.values(inputs).forEach(input => input.addEventListener('input', () => {
-  if (mode === 'cut') {
-    const editedValue = input.value;
-    mode = 'mine';
-    if (savedMarks) Object.entries(savedMarks).forEach(([savedKey, value]) => { inputs[savedKey].value = value; });
-    input.value = editedValue;
-    simulated = false;
-    updateModeControls();
+function shareEntries() {
+  return Object.entries(latestReport.results)
+    .filter(([, result]) => result.applicable && result.score !== null)
+    .map(([key, result]) => ({ label: tests[key].label, mark: displayMark(key, result.value), score: result.score }));
+}
+
+async function shareResult() {
+  if (!latestReport.complete || mode !== 'mine') return;
+  const { sex, age } = profile();
+  const text = buildShareText({
+    profile: `${sex === 'F' ? 'Mujer' : 'Hombre'} · ${ageBands[ageBandIndex(age)]}`,
+    status: latestReport.status,
+    average: latestReport.average,
+    entries: shareEntries(),
+  });
+  const shareData = { title: 'Simulador TGCF · Evaluación física', text, url: window.location.href };
+  const feedback = $('#share-feedback');
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+      feedback.textContent = 'Resultado compartido.';
+    } else if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(`${text}\n${window.location.href}`);
+      feedback.textContent = 'Resultado copiado.';
+    } else {
+      window.prompt('Copia tu resultado:', `${text}\n${window.location.href}`);
+    }
+  } catch (error) {
+    if (error?.name !== 'AbortError') feedback.textContent = 'No se ha podido compartir. Inténtalo de nuevo.';
   }
+}
+
+Object.entries(controls).forEach(([, control]) => control.fields.forEach(field => field.addEventListener('input', () => {
+  if (mode === 'cut') leaveCutAfterEdit(field);
+  persistState();
   render();
-}));
-$('#sex').addEventListener('change', () => { if (simulated) applyCut(); render(); });
-$('#age').addEventListener('change', () => { if (simulated) applyCut(); render(); });
+})));
+$('#sex').addEventListener('change', () => { if (simulated) applyCut(); else persistState(); render(); });
+$('#age').addEventListener('change', () => { if (simulated) applyCut(); else persistState(); render(); });
 document.querySelectorAll('.mode').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
 document.querySelectorAll('.baremo-button').forEach(button => button.addEventListener('click', () => openBaremo(button.dataset.baremo)));
 $('#close-dialog').addEventListener('click', () => $('#baremo-dialog').close());
 $('#baremo-dialog').addEventListener('click', event => { if (event.target === $('#baremo-dialog')) $('#baremo-dialog').close(); });
+$('#share-result').addEventListener('click', shareResult);
 
 render();
