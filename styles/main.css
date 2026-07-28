@@ -33,7 +33,7 @@ h1 { margin: 0; max-width: 760px; font: 700 clamp(42px, 7vw, 78px)/.94 var(--ser
 h1 em { color: var(--coral); font-style: italic; }
 .lede { max-width: 590px; margin: 22px 0 0; color: var(--ink-soft); font-size: 16px; line-height: 1.6; }
 .source-note { display: flex; gap: 10px; border-top: 2px solid var(--ink); padding-top: 12px; font-size: 12px; line-height: 1.55; color: var(--ink-soft); }
-.source-note b { color: var(--ink); }.source-dot { width: 8px; height: 8px; margin-top: 5px; border-radius: 50%; background: var(--coral); flex: none; }
+.source-note b { color: var(--ink); }.source-note a { color: inherit; text-decoration-color: transparent; text-underline-offset: 3px; transition: color .15s, text-decoration-color .15s; }.source-note a:hover, .source-note a:focus-visible { color: var(--ink); text-decoration-color: currentColor; }.source-dot { width: 8px; height: 8px; margin-top: 5px; border-radius: 50%; background: var(--coral); flex: none; }
 .setup, .objective, .measurements { border-bottom: 1px solid var(--line); padding: 38px 0; }
 .section-heading { display: grid; grid-template-columns: 44px 1fr auto; gap: 16px; align-items: start; margin-bottom: 28px; }
 .section-heading.compact { grid-template-columns: 44px 1fr; }.step { font: 11px var(--mono); color: var(--ink-soft); padding-top: 3px; }.section-heading h2 { margin: 0; font: 700 26px/1.04 var(--serif); letter-spacing: -.025em; }.measurement-note { margin: 8px 0 0; color: var(--ink-soft); font-size: 12px; }
