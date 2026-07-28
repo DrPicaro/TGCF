@@ -5,7 +5,7 @@ export function durationFromParts(minutesInput, secondsInput) {
   if (!/^\d+$/.test(minutesText) || !/^\d+$/.test(secondsText)) return null;
   const minutes = Number(minutesText);
   const seconds = Number(secondsText);
-  if (seconds > 59) return null;
+  if (minutes > 99 || seconds > 59) return null;
   return minutes * 60 + seconds;
 }
 

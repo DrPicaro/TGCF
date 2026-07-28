@@ -12,6 +12,7 @@ test('rejects incomplete or out-of-range duration fields', () => {
   assert.equal(durationFromParts('1', ''), null);
   assert.equal(durationFromParts('', '30'), null);
   assert.equal(durationFromParts('1', '60'), null);
+  assert.equal(durationFromParts('100', '00'), null);
   assert.equal(durationFromParts('-1', '30'), null);
 });
 

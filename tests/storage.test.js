@@ -27,3 +27,14 @@ test('ignores invalid or unavailable saved values safely', () => {
   assert.equal(loadState(storage), null);
   assert.equal(saveState(null, { sex: 'M', age: '30', marks: {} }), false);
 });
+
+test('does not restore out-of-range saved duration fields', () => {
+  const storage = memoryStorage();
+  storage.setItem(STORAGE_KEY, JSON.stringify({
+    sex: 'M', age: '30',
+    marks: { flex: '20', plank: { minutes: '100', seconds: '00' }, run: { minutes: '11', seconds: '60' }, agility: '' },
+  }));
+  assert.deepEqual(loadState(storage)?.marks, {
+    flex: '20', plank: { minutes: '', seconds: '00' }, run: { minutes: '11', seconds: '' }, agility: '',
+  });
+});

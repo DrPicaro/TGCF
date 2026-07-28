@@ -12,6 +12,15 @@ let mode = 'mine';
 let savedMarks = null;
 let simulated = false;
 let latestReport = { complete: false, status: 'PENDIENTE', average: null, results: {} };
+const storage = availableStorage();
+
+function availableStorage() {
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
 
 const controls = {
   flex: {
@@ -81,11 +90,11 @@ function restoreMarks(marks) {
 function persistState() {
   if (mode !== 'mine') return;
   const { sex, age } = profile();
-  saveState(window.localStorage, { sex, age: String(age), marks: marksState() });
+  saveState(storage, { sex, age: String(age), marks: marksState() });
 }
 
 function restoreSavedState() {
-  const state = loadState(window.localStorage);
+  const state = loadState(storage);
   if (!state) return;
   $('#sex').value = state.sex;
   ageSelect.value = state.age;
