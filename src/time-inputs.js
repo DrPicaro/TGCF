@@ -1,4 +1,4 @@
-export function durationFromParts(minutesInput, secondsInput) {
+export function durationFromParts(minutesInput, secondsInput, { maxSeconds = 5999 } = {}) {
   const minutesText = String(minutesInput ?? '').trim();
   const secondsText = String(secondsInput ?? '').trim();
   if (!minutesText && !secondsText) return null;
@@ -6,7 +6,8 @@ export function durationFromParts(minutesInput, secondsInput) {
   const minutes = Number(minutesText);
   const seconds = Number(secondsText);
   if (minutes > 99 || seconds > 59) return null;
-  return minutes * 60 + seconds;
+  const totalSeconds = minutes * 60 + seconds;
+  return totalSeconds <= maxSeconds ? totalSeconds : null;
 }
 
 export function durationToParts(totalSeconds) {

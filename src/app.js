@@ -4,9 +4,12 @@ import { formatAgility, formatDuration } from './formatters.js';
 import { durationFromParts, durationToParts } from './time-inputs.js';
 import { loadState, saveState } from './storage.js';
 import { buildShareText } from './share.js';
+import { officialMarkBounds, officialReferenceMarks } from './reference-options.js';
 
 const $ = selector => document.querySelector(selector);
 const tests = data.tests;
+const officialBounds = Object.fromEntries(Object.entries(tests).map(([key, test]) => [key, officialMarkBounds(test)]));
+const referencePickers = Object.fromEntries(Object.keys(tests).map(key => [key, $(`#${key}-reference`)]));
 const ageBands = ['17–25 años', '26–30 años', '31–35 años', '36–40 años', '41–45 años', '46–50 años', '51–55 años', '56–59 años', '60 o más'];
 let mode = 'mine';
 let savedMarks = null;
@@ -29,6 +32,7 @@ const controls = {
     write: mark => { $('#flex').value = mark ?? ''; },
     state: () => $('#flex').value,
     restore: value => { $('#flex').value = value ?? ''; },
+    hasAny: () => $('#flex').value !== '',
   },
   plank: durationControl('plank'),
   run: durationControl('run'),
@@ -38,6 +42,7 @@ const controls = {
     write: mark => { $('#agility').value = mark === null || mark === undefined ? '' : (mark / 10).toFixed(1); },
     state: () => $('#agility').value,
     restore: value => { $('#agility').value = value ?? ''; },
+    hasAny: () => $('#agility').value !== '',
   },
 };
 
@@ -46,7 +51,7 @@ function durationControl(key) {
   const seconds = $(`#${key}-seconds`);
   return {
     fields: [minutes, seconds],
-    read: () => durationFromParts(minutes.value, seconds.value),
+    read: () => durationFromParts(minutes.value, seconds.value, { maxSeconds: officialBounds[key].max }),
     write: mark => {
       const parts = durationToParts(mark);
       minutes.value = parts.minutes;
@@ -57,6 +62,8 @@ function durationControl(key) {
       minutes.value = value?.minutes ?? '';
       seconds.value = value?.seconds ?? '';
     },
+    hasAny: () => minutes.value !== '' || seconds.value !== '',
+    isIncomplete: () => (minutes.value === '') !== (seconds.value === ''),
   };
 }
 
@@ -72,7 +79,28 @@ age60Plus.value = '60';
 age60Plus.textContent = '60 o más';
 ageSelect.append(age60Plus);
 ageSelect.value = '30';
+populateReferencePickers();
+applyOfficialInputLimits();
 restoreSavedState();
+
+function populateReferencePickers() {
+  Object.entries(tests).forEach(([key, test]) => {
+    const picker = referencePickers[key];
+    picker.replaceChildren(new Option('Elegir del baremo…', ''));
+    officialReferenceMarks(test).forEach(mark => picker.add(new Option(displayMark(key, mark), String(mark))));
+  });
+}
+
+function applyOfficialInputLimits() {
+  Object.entries(officialBounds).forEach(([key, bounds]) => {
+    $(`#${key}-max`).textContent = displayMark(key, bounds.max);
+  });
+  $('#flex').max = String(officialBounds.flex.max);
+  $('#agility').max = String(officialBounds.agility.max / 10);
+  ['plank', 'run'].forEach(key => {
+    $(`#${key}-minutes`).max = String(Math.floor(officialBounds[key].max / 60));
+  });
+}
 
 function profile() {
   const age = Number(ageSelect.value);
@@ -102,7 +130,10 @@ function restoreSavedState() {
 }
 
 function rawValue(key) {
-  return controls[key].read();
+  const value = controls[key].read();
+  if (value === null || !Number.isFinite(value)) return null;
+  const comparable = key === 'agility' ? normalizeAgilityTenths(value) : value;
+  return comparable > officialBounds[key].max ? null : value;
 }
 
 function displayMark(key, mark) {
@@ -140,6 +171,7 @@ function updateMetric(key) {
   targetElement.textContent = displayMark(key, target);
   article.classList.toggle('is-not-applicable', score === null);
   controls[key].fields.forEach(field => { field.disabled = score === null; });
+  referencePickers[key].disabled = score === null;
   if (score === null) {
     targetElement.textContent = 'No aplicable';
     resultElement.className = 'result';
@@ -148,7 +180,10 @@ function updateMetric(key) {
   }
   if (value === null || !Number.isFinite(value)) {
     resultElement.className = 'result';
-    resultElement.textContent = key === 'plank' || key === 'run' ? 'Completa min. y seg.' : 'Sin marca';
+    const control = controls[key];
+    resultElement.textContent = !control.hasAny() ? (key === 'plank' || key === 'run' ? 'Completa min. y seg.' : 'Sin marca')
+      : control.isIncomplete?.() ? 'Completa min. y seg.'
+        : 'Fuera del máximo oficial';
     return { applicable: true, value: null, score: null, passed: false };
   }
   const passed = score >= 20;
@@ -242,6 +277,22 @@ function leaveCutAfterEdit(editedField) {
   updateModeControls();
 }
 
+function chooseReference(key) {
+  const picker = referencePickers[key];
+  if (picker.value === '') return;
+  const mark = Number(picker.value);
+  if (mode === 'cut') {
+    mode = 'mine';
+    if (savedMarks) restoreMarks(savedMarks);
+    simulated = false;
+    updateModeControls();
+  }
+  controls[key].write(mark);
+  picker.value = '';
+  persistState();
+  render();
+}
+
 function openBaremo(key) {
   const { age, sex } = profile();
   const test = tests[key];
@@ -291,6 +342,7 @@ Object.entries(controls).forEach(([, control]) => control.fields.forEach(field =
   persistState();
   render();
 })));
+Object.keys(referencePickers).forEach(key => referencePickers[key].addEventListener('change', () => chooseReference(key)));
 $('#sex').addEventListener('change', () => { if (simulated) applyCut(); else persistState(); render(); });
 $('#age').addEventListener('change', () => { if (simulated) applyCut(); else persistState(); render(); });
 document.querySelectorAll('.mode').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));

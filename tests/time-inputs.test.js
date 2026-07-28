@@ -16,6 +16,11 @@ test('rejects incomplete or out-of-range duration fields', () => {
   assert.equal(durationFromParts('-1', '30'), null);
 });
 
+test('accepts an optional official upper limit for a duration', () => {
+  assert.equal(durationFromParts('5', '15', { maxSeconds: 315 }), 315);
+  assert.equal(durationFromParts('5', '16', { maxSeconds: 315 }), null);
+});
+
 test('splits total seconds into mobile-friendly fields', () => {
   assert.deepEqual(durationToParts(90), { minutes: '1', seconds: '30' });
   assert.deepEqual(durationToParts(5), { minutes: '0', seconds: '05' });

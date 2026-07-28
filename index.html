@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles/main.css?v=10">
+  <link rel="stylesheet" href="styles/main.css?v=11">
 </head>
 <body>
   <header class="topbar">
@@ -76,7 +76,7 @@
         <article class="metric" data-test="flex">
           <div class="metric-number">01</div>
           <div class="metric-main"><p class="metric-kicker">Fuerza del tren superior</p><h3>Flexo-extensiones</h3><p class="metric-description">Repeticiones correctas.</p></div>
-          <label class="entry"><span>Tu marca</span><input id="flex" type="number" min="0" max="99" inputmode="numeric" placeholder="—"><small>repeticiones</small></label>
+          <div class="entry-stack"><label class="entry"><span>Tu marca</span><input id="flex" type="number" min="0" max="73" inputmode="numeric" placeholder="—"><small>repeticiones · máximo oficial: <span id="flex-max">—</span></small></label><label class="reference-entry"><span>Referencia oficial</span><select id="flex-reference" aria-label="Elegir referencia oficial de flexiones"><option value="">Elegir del baremo…</option></select></label></div>
           <div class="target"><span>Corte APTO</span><b id="flex-target">—</b></div>
           <div class="result" id="flex-result" aria-live="polite">Sin marca</div>
           <button class="baremo-button" data-baremo="flex" type="button">Baremo</button>
@@ -85,7 +85,7 @@
         <article class="metric" data-test="plank">
           <div class="metric-number">02</div>
           <div class="metric-main"><p class="metric-kicker">Fuerza abdominal</p><h3>Plancha isométrica</h3><p class="metric-description">Introduce minutos y segundos por separado.</p></div>
-          <div class="entry duration-entry" role="group" aria-labelledby="plank-entry-label"><span id="plank-entry-label">Tu marca</span><div class="duration-fields"><label><span>Min.</span><input id="plank-minutes" type="number" min="0" max="99" inputmode="numeric" placeholder="1" aria-label="Minutos de plancha"></label><span class="duration-separator" aria-hidden="true">:</span><label><span>Seg.</span><input id="plank-seconds" type="number" min="0" max="59" inputmode="numeric" placeholder="30" aria-label="Segundos de plancha"></label></div><small>min : seg</small></div>
+          <div class="entry-stack"><div class="entry duration-entry" role="group" aria-labelledby="plank-entry-label"><span id="plank-entry-label">Tu marca</span><div class="duration-fields"><label><span>Min.</span><input id="plank-minutes" type="number" min="0" max="5" inputmode="numeric" placeholder="1" aria-label="Minutos de plancha"></label><span class="duration-separator" aria-hidden="true">:</span><label><span>Seg.</span><input id="plank-seconds" type="number" min="0" max="59" inputmode="numeric" placeholder="30" aria-label="Segundos de plancha"></label></div><small>min : seg · máximo oficial: <span id="plank-max">—</span></small></div><label class="reference-entry"><span>Referencia oficial</span><select id="plank-reference" aria-label="Elegir referencia oficial de plancha"><option value="">Elegir del baremo…</option></select></label></div>
           <div class="target"><span>Corte APTO</span><b id="plank-target">—</b></div>
           <div class="result" id="plank-result" aria-live="polite">Sin marca</div>
           <button class="baremo-button" data-baremo="plank" type="button">Baremo</button>
@@ -94,7 +94,7 @@
         <article class="metric" data-test="run">
           <div class="metric-number">03</div>
           <div class="metric-main"><p class="metric-kicker">Resistencia</p><h3>Carrera · 2.000 m</h3><p class="metric-description">Introduce minutos y segundos por separado.</p></div>
-          <div class="entry duration-entry" role="group" aria-labelledby="run-entry-label"><span id="run-entry-label">Tu marca</span><div class="duration-fields"><label><span>Min.</span><input id="run-minutes" type="number" min="0" max="99" inputmode="numeric" placeholder="11" aria-label="Minutos de carrera"></label><span class="duration-separator" aria-hidden="true">:</span><label><span>Seg.</span><input id="run-seconds" type="number" min="0" max="59" inputmode="numeric" placeholder="30" aria-label="Segundos de carrera"></label></div><small>min : seg</small></div>
+          <div class="entry-stack"><div class="entry duration-entry" role="group" aria-labelledby="run-entry-label"><span id="run-entry-label">Tu marca</span><div class="duration-fields"><label><span>Min.</span><input id="run-minutes" type="number" min="0" max="16" inputmode="numeric" placeholder="11" aria-label="Minutos de carrera"></label><span class="duration-separator" aria-hidden="true">:</span><label><span>Seg.</span><input id="run-seconds" type="number" min="0" max="59" inputmode="numeric" placeholder="30" aria-label="Segundos de carrera"></label></div><small>min : seg · máximo oficial: <span id="run-max">—</span></small></div><label class="reference-entry"><span>Referencia oficial</span><select id="run-reference" aria-label="Elegir referencia oficial de carrera"><option value="">Elegir del baremo…</option></select></label></div>
           <div class="target"><span>Corte APTO</span><b id="run-target">—</b></div>
           <div class="result" id="run-result" aria-live="polite">Sin marca</div>
           <button class="baremo-button" data-baremo="run" type="button">Baremo</button>
@@ -103,7 +103,7 @@
         <article class="metric" data-test="agility">
           <div class="metric-number">04</div>
           <div class="metric-main"><p class="metric-kicker">Agilidad y velocidad</p><h3>Circuito</h3><p class="metric-description">Se registra a la décima inferior.</p></div>
-          <label class="entry"><span>Tu marca</span><input id="agility" type="number" min="0" step="0.01" inputmode="decimal" placeholder="15,2"><small>segundos</small></label>
+          <div class="entry-stack"><label class="entry"><span>Tu marca</span><input id="agility" type="number" min="0" max="19" step="0.01" inputmode="decimal" placeholder="15,2"><small>segundos · máximo oficial: <span id="agility-max">—</span></small></label><label class="reference-entry"><span>Referencia oficial</span><select id="agility-reference" aria-label="Elegir referencia oficial de circuito"><option value="">Elegir del baremo…</option></select></label></div>
           <div class="target"><span>Corte APTO</span><b id="agility-target">—</b></div>
           <div class="result" id="agility-result" aria-live="polite">Sin marca</div>
           <button class="baremo-button" data-baremo="agility" type="button">Baremo</button>
@@ -130,6 +130,6 @@
     <div class="table-wrap"><table><thead><tr><th>Marca</th><th>Puntos</th></tr></thead><tbody id="baremo-body"></tbody></table></div>
   </dialog>
 
-  <script type="module" src="src/app.js?v=6"></script>
+  <script type="module" src="src/app.js?v=7"></script>
 </body>
 </html>

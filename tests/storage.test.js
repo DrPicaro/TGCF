@@ -28,6 +28,18 @@ test('ignores invalid or unavailable saved values safely', () => {
   assert.equal(saveState(null, { sex: 'M', age: '30', marks: {} }), false);
 });
 
+test('does not restore marks beyond official table maxima', () => {
+  const storage = memoryStorage();
+  storage.setItem(STORAGE_KEY, JSON.stringify({
+    sex: 'M', age: '30', marks: {
+      flex: '74', plank: { minutes: '5', seconds: '16' }, run: { minutes: '16', seconds: '55' }, agility: '19.1',
+    },
+  }));
+  assert.deepEqual(loadState(storage)?.marks, {
+    flex: '', plank: { minutes: '', seconds: '' }, run: { minutes: '', seconds: '' }, agility: '',
+  });
+});
+
 test('does not restore out-of-range saved duration fields', () => {
   const storage = memoryStorage();
   storage.setItem(STORAGE_KEY, JSON.stringify({
