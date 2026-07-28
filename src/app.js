@@ -86,7 +86,7 @@ restoreSavedState();
 function populateReferencePickers() {
   Object.entries(tests).forEach(([key, test]) => {
     const picker = referencePickers[key];
-    picker.replaceChildren(new Option('Elegir una marca…', ''));
+    picker.replaceChildren(new Option('—', ''));
     officialReferenceMarks(test).forEach(mark => picker.add(new Option(displayMark(key, mark), String(mark))));
   });
 }
