@@ -10,6 +10,19 @@ let mode = 'mine';
 let savedMarks = null;
 let simulated = false;
 
+const ageSelect = $('#age');
+for (let age = 17; age <= 59; age += 1) {
+  const option = document.createElement('option');
+  option.value = String(age);
+  option.textContent = String(age);
+  ageSelect.append(option);
+}
+const age60Plus = document.createElement('option');
+age60Plus.value = '60';
+age60Plus.textContent = '60 o más';
+ageSelect.append(age60Plus);
+ageSelect.value = '30';
+
 function profile() {
   const age = Number($('#age').value);
   return { age: Number.isFinite(age) ? age : 17, sex: $('#sex').value };
@@ -119,6 +132,17 @@ function applyCut() {
   });
 }
 
+function updateModeControls() {
+  document.querySelectorAll('.mode').forEach(button => {
+    const active = button.dataset.mode === mode;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  $('#mode-copy').textContent = mode === 'cut'
+    ? 'Estos son los mínimos oficiales: 20 puntos en cada prueba aplicable según sexo y edad.'
+    : 'Introduce tus marcas. La aplicación compara cada una con el corte de 20 puntos.';
+}
+
 function setMode(nextMode) {
   if (nextMode === mode) return;
 
@@ -135,14 +159,7 @@ function setMode(nextMode) {
     simulated = false;
   }
 
-  document.querySelectorAll('.mode').forEach(button => {
-    const active = button.dataset.mode === mode;
-    button.classList.toggle('active', active);
-    button.setAttribute('aria-pressed', String(active));
-  });
-  $('#mode-copy').textContent = mode === 'cut'
-    ? 'Estos son los mínimos oficiales: 20 puntos en cada prueba aplicable según sexo y edad.'
-    : 'Introduce tus marcas. La aplicación compara cada una con el corte de 20 puntos.';
+  updateModeControls();
   render();
 }
 
@@ -158,9 +175,19 @@ function openBaremo(key) {
   $('#baremo-dialog').showModal();
 }
 
-Object.values(inputs).forEach(input => input.addEventListener('input', () => { simulated = false; render(); }));
+Object.values(inputs).forEach(input => input.addEventListener('input', () => {
+  if (mode === 'cut') {
+    const editedValue = input.value;
+    mode = 'mine';
+    if (savedMarks) Object.entries(savedMarks).forEach(([savedKey, value]) => { inputs[savedKey].value = value; });
+    input.value = editedValue;
+    simulated = false;
+    updateModeControls();
+  }
+  render();
+}));
 $('#sex').addEventListener('change', () => { if (simulated) applyCut(); render(); });
-$('#age').addEventListener('input', () => { if (simulated) applyCut(); render(); });
+$('#age').addEventListener('change', () => { if (simulated) applyCut(); render(); });
 document.querySelectorAll('.mode').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
 document.querySelectorAll('.baremo-button').forEach(button => button.addEventListener('click', () => openBaremo(button.dataset.baremo)));
 $('#close-dialog').addEventListener('click', () => $('#baremo-dialog').close());

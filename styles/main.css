@@ -24,7 +24,7 @@ button { cursor: pointer; }
 .brand { display: flex; gap: 9px; align-items: center; color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 800; letter-spacing: .11em; }
 .association-logo { object-fit: contain; mix-blend-mode: multiply; }
 .source-block { align-self: end; }
-.intro-logo { display: block; width: 260px; height: 260px; margin: 0 0 10px; }
+.intro-logo { display: block; width: 240px; max-width: 100%; height: auto; margin: 0 0 10px; }
 .shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
 .intro { min-height: 296px; display: grid; grid-template-columns: minmax(0, 1fr) 270px; align-items: end; gap: 40px; padding: 65px 0 50px; border-bottom: 1px solid var(--line); }
 .eyebrow { margin: 0 0 8px; font: 10px/1 var(--mono); letter-spacing: .13em; text-transform: uppercase; color: var(--coral); }
