@@ -7,7 +7,7 @@ Simulador público de evaluación física periódica de las Fuerzas Armadas, bas
 Abre `index.html` en un navegador o visita la versión publicada mediante GitHub Pages.
 
 - Selecciona sexo y edad.
-- Introduce tus marcas o consulta directamente el corte APTO.
+- Introduce tus marcas, selecciónalas en el desplegable o consulta directamente el corte APTO.
 - La aptitud exige al menos 20 puntos en cada prueba aplicable; no hay compensación por media.
 
 ## Desarrollo y validación

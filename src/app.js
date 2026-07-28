@@ -3,7 +3,7 @@ import { ageBandIndex, calculateScore, minimumMarkForPoints, normalizeAgilityTen
 import { formatAgility, formatDuration } from './formatters.js';
 import { durationFromParts, durationToParts } from './time-inputs.js';
 import { loadState, saveState } from './storage.js';
-import { buildShareText } from './share.js';
+
 import { officialMarkBounds, officialReferenceMarks } from './reference-options.js';
 
 const $ = selector => document.querySelector(selector);
@@ -86,7 +86,7 @@ restoreSavedState();
 function populateReferencePickers() {
   Object.entries(tests).forEach(([key, test]) => {
     const picker = referencePickers[key];
-    picker.replaceChildren(new Option('Elegir del baremo…', ''));
+    picker.replaceChildren(new Option('Elegir una marca…', ''));
     officialReferenceMarks(test).forEach(mark => picker.add(new Option(displayMark(key, mark), String(mark))));
   });
 }
@@ -196,8 +196,7 @@ function updateReport(results) {
   const applicable = Object.values(results).filter(item => item.applicable);
   const complete = applicable.length > 0 && applicable.every(item => item.score !== null);
   const status = $('#report-status');
-  const shareButton = $('#share-result');
-  const shareFeedback = $('#share-feedback');
+
   if (!complete) {
     status.className = 'report-status waiting';
     $('#status-word').textContent = mode === 'cut' ? 'CORTE' : 'PENDIENTE';
@@ -205,8 +204,7 @@ function updateReport(results) {
     $('#report-detail').textContent = mode === 'cut' ? 'El corte general equivale a 20 puntos en cada prueba aplicable. Puedes usarlo como simulación o compararlo con tus marcas.' : 'La calificación de referencia exige al menos 20 puntos en cada prueba aplicable. La media no compensa una prueba inferior al corte.';
     $('#average').textContent = '—';
     $('#passed-count').textContent = '—';
-    shareButton.disabled = true;
-    shareFeedback.textContent = '';
+
     return { complete: false, status: 'PENDIENTE', average: null, results };
   }
   const scores = applicable.map(item => item.score);
@@ -221,8 +219,6 @@ function updateReport(results) {
   const averageText = average.toFixed(1).replace('.', ',');
   $('#average').textContent = averageText;
   $('#passed-count').textContent = `${passedCount}/${applicable.length}`;
-  shareButton.disabled = mode !== 'mine';
-  if (mode !== 'mine') shareFeedback.textContent = '';
   return { complete: true, status: reportStatus, average: averageText, results };
 }
 
@@ -305,37 +301,6 @@ function openBaremo(key) {
   $('#baremo-dialog').showModal();
 }
 
-function shareEntries() {
-  return Object.entries(latestReport.results)
-    .filter(([, result]) => result.applicable && result.score !== null)
-    .map(([key, result]) => ({ label: tests[key].label, mark: displayMark(key, result.value), score: result.score }));
-}
-
-async function shareResult() {
-  if (!latestReport.complete || mode !== 'mine') return;
-  const { sex, age } = profile();
-  const text = buildShareText({
-    profile: `${sex === 'F' ? 'Mujer' : 'Hombre'} · ${ageBands[ageBandIndex(age)]}`,
-    status: latestReport.status,
-    average: latestReport.average,
-    entries: shareEntries(),
-  });
-  const shareData = { title: 'Simulador TGCF · Evaluación física', text, url: window.location.href };
-  const feedback = $('#share-feedback');
-  try {
-    if (navigator.share) {
-      await navigator.share(shareData);
-      feedback.textContent = 'Resultado compartido.';
-    } else if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(`${text}\n${window.location.href}`);
-      feedback.textContent = 'Resultado copiado.';
-    } else {
-      window.prompt('Copia tu resultado:', `${text}\n${window.location.href}`);
-    }
-  } catch (error) {
-    if (error?.name !== 'AbortError') feedback.textContent = 'No se ha podido compartir. Inténtalo de nuevo.';
-  }
-}
 
 Object.entries(controls).forEach(([, control]) => control.fields.forEach(field => field.addEventListener('input', () => {
   if (mode === 'cut') leaveCutAfterEdit(field);
@@ -349,6 +314,6 @@ document.querySelectorAll('.mode').forEach(button => button.addEventListener('cl
 document.querySelectorAll('.baremo-button').forEach(button => button.addEventListener('click', () => openBaremo(button.dataset.baremo)));
 $('#close-dialog').addEventListener('click', () => $('#baremo-dialog').close());
 $('#baremo-dialog').addEventListener('click', event => { if (event.target === $('#baremo-dialog')) $('#baremo-dialog').close(); });
-$('#share-result').addEventListener('click', shareResult);
+
 
 render();
