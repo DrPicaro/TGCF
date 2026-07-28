@@ -1,0 +1,6 @@
+# Paquetes locales de distribución
+tgcf-evaluacion-fisica.zip
+
+# Dependencias y registros
+node_modules/
+npm-debug.log*
