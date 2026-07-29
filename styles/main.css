@@ -85,17 +85,19 @@ dialog { width: min(620px, calc(100% - 32px)); max-height: min(720px, calc(100% 
 .profile-summary, .profile-details { margin-left: 0; }
 
 @media (max-width: 570px) {
-  .setup { padding: 18px 0 12px; }.objective { padding: 12px 0 18px; }.measurements { padding: 18px 0 20px; }
+  .setup { padding: 12px 0 8px; }.objective { padding: 8px 0 12px; }.measurements { padding: 12px 0 14px; }
   .brand-logo { width: 42px; height: 42px; }
-  .metric { grid-template-columns: 28px minmax(0, 1fr) minmax(82px, .72fr); row-gap: 10px; }
-  .metric .metric-main { grid-column: 2 / 4; }
+  .metric { grid-template-columns: 26px minmax(0, 1fr) minmax(78px, .68fr); row-gap: 7px; margin-bottom: 8px; padding: 12px 10px; }
+  .metric .metric-main { display: grid; grid-column: 2 / 4; grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 8px; }
+  .metric .metric-main h3 { grid-column: 1; grid-row: 1; font-size: 18px; }
+  .metric .metric-kicker { grid-column: 2; grid-row: 1; max-width: 104px; margin: 0; font-size: 8px; line-height: 1.2; text-align: right; }
   .metric .entry-stack { display: block; grid-column: 2; grid-row: 2; min-width: 0; }
-  .metric .target { grid-column: 3; grid-row: 2; align-self: end; min-height: 48px; margin: 0; padding: 7px 0 0 9px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
-  .metric .result { grid-column: 2 / 4; grid-row: 3; min-height: 0; padding-top: 8px; border-top: 1px solid var(--line); text-align: right; }
-  .metric .result b { display: inline; margin-right: 7px; font-size: 16px; }.metric .baremo-button { grid-column: 2 / 4; grid-row: 4; justify-self: start; }
+  .metric .target { grid-column: 3; grid-row: 2; align-self: end; min-height: 43px; margin: 0; padding: 5px 0 0 8px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .metric .result { grid-column: 2 / 4; grid-row: 3; min-height: 0; padding-top: 6px; border-top: 1px solid var(--line); text-align: right; }
+  .metric .result b { display: inline; margin-right: 6px; font-size: 15px; }.metric .baremo-button { grid-column: 2 / 4; grid-row: 4; padding: 2px 0; justify-self: start; }
   .entry-stack .entry { min-width: 0; }
-  .metric .entry small { white-space: nowrap; font-size: 9px; }
-  .duration-fields { gap: 3px; }.duration-fields input { padding: 0 7px; }.duration-separator { padding-bottom: 10px; }
+  .metric .entry { gap: 2px; }.metric .entry input { min-height: 43px; }.metric .entry small { white-space: nowrap; font-size: 8px; }
+  .duration-fields { gap: 3px; }.duration-fields input { min-height: 40px; padding: 0 6px; }.duration-separator { padding-bottom: 9px; }
   .report { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 20px; padding: 17px; }
   .report-status { flex: 0 0 42px; grid-template-columns: 36px; gap: 3px; }.status-ring { width: 34px; height: 34px; }.status-ring::after { inset: 5px; }
   .report-status span:last-child { font-size: 9px; }.report-copy { flex: 1 1 180px; min-width: 0; }.report-copy .eyebrow, .report-copy p:last-child { display: none; }

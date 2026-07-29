@@ -235,10 +235,6 @@ function updateMobileSummary(results) {
 }
 
 function render() {
-  try {
-    const band = ageBandIndex(profile().age);
-    $('#age-band').textContent = ageBands[band];
-  } catch { $('#age-band').textContent = 'Edad no válida'; }
   updateProfileSummary();
   const results = Object.fromEntries(Object.keys(tests).map(key => [key, updateMetric(key)]));
   $('#agility-note').hidden = results.agility.applicable;
@@ -310,8 +306,9 @@ document.querySelectorAll('.mode').forEach(button => button.addEventListener('cl
 document.querySelectorAll('.baremo-button').forEach(button => button.addEventListener('click', () => openBaremo(button.dataset.baremo)));
 $('.profile-edit').addEventListener('click', () => {
   const details = $('#profile-details');
-  details.open = !details.open;
-  if (details.open) details.querySelector('select').focus();
+  details.hidden = !details.hidden;
+  $('.profile-edit').setAttribute('aria-expanded', String(!details.hidden));
+  if (!details.hidden) details.querySelector('select').focus();
 });
 $('#close-dialog').addEventListener('click', () => $('#baremo-dialog').close());
 $('#baremo-dialog').addEventListener('click', event => { if (event.target === $('#baremo-dialog')) $('#baremo-dialog').close(); });
