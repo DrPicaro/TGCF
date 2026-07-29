@@ -21,8 +21,8 @@ button, input, select { font: inherit; }
 button { cursor: pointer; }
 .topbar { border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; padding: 16px max(20px, calc((100vw - 1180px) / 2)); background: rgba(246,244,239,.94); position: sticky; top: 0; z-index: 2; backdrop-filter: blur(12px); }
 .topbar p { margin: 0; font: 11px/1.1 var(--mono); color: var(--ink-soft); text-align: right; }
-.normativa-link { color: var(--ink-soft); font: 11px/1.1 var(--mono); text-align: right; text-decoration: none; }.normativa-link::after { content: " ↗"; color: var(--coral); }.normativa-link:focus-visible, .normativa-link:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--coral); text-underline-offset: 4px; }
-.brand { display: flex; gap: 10px; align-items: center; color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 800; letter-spacing: .11em; }.brand-logo { width: 44px; height: 44px; object-fit: contain; mix-blend-mode: multiply; }
+.normativa-link { display: grid; gap: 3px; color: var(--ink-soft); font: 9px/1 var(--mono); text-align: right; text-decoration: none; }.normativa-link strong { color: var(--ink); font: 700 10px/1.1 var(--sans); }.normativa-link:focus-visible, .normativa-link:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--coral); text-underline-offset: 4px; }.normativa-link:hover strong, .normativa-link:focus-visible strong { color: var(--coral); }
+.brand { display: flex; gap: 11px; align-items: center; color: var(--ink); text-decoration: none; font-size: 17px; font-weight: 800; letter-spacing: .11em; }.brand-logo { width: 47px; height: 47px; object-fit: contain; mix-blend-mode: multiply; }
 .association-logo { object-fit: contain; mix-blend-mode: multiply; }
 .source-block { align-self: end; }
 .intro-logo { display: block; width: 240px; max-width: 100%; height: auto; margin: 0 0 10px; }
@@ -55,10 +55,10 @@ dialog { width: min(620px, calc(100% - 32px)); max-height: min(720px, calc(100% 
 .profile-details > summary { cursor: pointer; color: var(--coral); font: 700 11px var(--sans); }
 .profile-details .profile-controls { margin: 16px 0 0; }
 .source-note > summary { cursor: pointer; list-style: none; }.source-note > summary::-webkit-details-marker { display: none; }.source-note > summary::after { content: "+"; float: right; font: 16px var(--mono); }.source-note[open] > summary::after { content: "−"; }.source-note > a, .source-note > small { display: block; margin-left: 18px; }
-.mobile-summary { display: none; }
+
 
 @media (max-width: 570px) {
-  body { padding-bottom: 82px; }
+  body { padding-bottom: 0; }
   .topbar { padding: 12px 16px; }
   .topbar p { max-width: none; }
   .intro { padding: 30px 0 24px; gap: 18px; }
@@ -77,8 +77,7 @@ dialog { width: min(620px, calc(100% - 32px)); max-height: min(720px, calc(100% 
   .target { padding-left: 10px; }.target b { font-size: 12px; }
   .result { min-height: 26px; }
   .report { margin-bottom: 10px; }
-  .mobile-summary { position: fixed; right: 14px; bottom: 12px; left: 14px; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 54px; padding: 0 16px; border: 1px solid var(--ink); border-radius: 3px; background: var(--ink); color: #f9f5ec; box-shadow: 0 8px 28px #162b3c33; font: 11px var(--mono); }
-  .mobile-summary a { border-bottom: 1px solid var(--coral); color: #f9f5ec; text-decoration: none; font: 700 11px var(--sans); }
+
 }
 
 /* Mobile-first simulator: open directly on the controls, not an editorial landing page. */
@@ -86,7 +85,7 @@ dialog { width: min(620px, calc(100% - 32px)); max-height: min(720px, calc(100% 
 .profile-summary, .profile-details { margin-left: 0; }
 
 @media (max-width: 570px) {
-  .topbar { gap: 10px; padding: 8px 16px; overflow: hidden; }.brand { flex: none; }.brand-logo { width: 40px; height: 40px; }.normativa-link { flex: 0 1 170px; min-width: 0; overflow: hidden; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+  .topbar { gap: 10px; padding: 8px 16px; overflow: hidden; }.brand { flex: none; font-size: 18px; }.brand-logo { width: 46px; height: 46px; }.normativa-link { flex: 0 1 156px; min-width: 0; font-size: 9px; }.normativa-link strong { font-size: 11px; white-space: nowrap; }
   .setup { padding: 8px 0 6px; }.objective { padding: 6px 0 8px; }.measurements { padding: 8px 0 10px; }
   .profile-summary { min-height: 46px; padding: 8px 12px; }.mode-switch { min-height: 44px; overflow: hidden; }.mode { min-width: 0; padding: 0 5px; font-size: 10px; white-space: nowrap; }
   .metric { grid-template-columns: 24px minmax(0, 1fr) 76px; column-gap: 7px; row-gap: 5px; margin-bottom: 6px; padding: 9px 9px; }

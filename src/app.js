@@ -220,26 +220,11 @@ function updateProfileSummary() {
   $('#profile-summary').textContent = `${sexLabel} · ${age} años · tramo ${band}`;
 }
 
-function updateMobileSummary(results) {
-  const applicable = Object.values(results).filter(item => item.applicable);
-  const complete = applicable.filter(item => item.score !== null).length;
-  const label = $('#mobile-progress-label');
-  const link = $('#mobile-report-link');
-  if (latestReport.complete) {
-    label.textContent = `${latestReport.status} · Media ${latestReport.average}`;
-    link.textContent = 'Ver informe';
-  } else {
-    label.textContent = `${complete} de ${applicable.length} pruebas completas`;
-    link.textContent = complete > 0 ? 'Ver progreso' : 'Ver informe';
-  }
-}
-
 function render() {
   updateProfileSummary();
   const results = Object.fromEntries(Object.keys(tests).map(key => [key, updateMetric(key)]));
   $('#agility-note').hidden = results.agility.applicable;
   latestReport = updateReport(results);
-  updateMobileSummary(results);
 }
 
 function applyCut() {
