@@ -4,12 +4,12 @@ import { formatAgility, formatDuration } from './formatters.js';
 import { durationFromParts, durationToParts } from './time-inputs.js';
 import { loadState, saveState } from './storage.js';
 
-import { officialMarkBounds, officialReferenceMarks } from './reference-options.js';
+import { officialMarkBounds } from './reference-options.js';
 
 const $ = selector => document.querySelector(selector);
 const tests = data.tests;
 const officialBounds = Object.fromEntries(Object.entries(tests).map(([key, test]) => [key, officialMarkBounds(test)]));
-const referencePickers = Object.fromEntries(Object.keys(tests).map(key => [key, $(`#${key}-reference`)]));
+
 const ageBands = ['17–25 años', '26–30 años', '31–35 años', '36–40 años', '41–45 años', '46–50 años', '51–55 años', '56–59 años', '60 o más'];
 let mode = 'mine';
 let savedMarks = null;
@@ -79,17 +79,8 @@ age60Plus.value = '60';
 age60Plus.textContent = '60 o más';
 ageSelect.append(age60Plus);
 ageSelect.value = '30';
-populateReferencePickers();
 applyOfficialInputLimits();
 restoreSavedState();
-
-function populateReferencePickers() {
-  Object.entries(tests).forEach(([key, test]) => {
-    const picker = referencePickers[key];
-    picker.replaceChildren(new Option('—', ''));
-    officialReferenceMarks(test).forEach(mark => picker.add(new Option(displayMark(key, mark), String(mark))));
-  });
-}
 
 function applyOfficialInputLimits() {
   Object.entries(officialBounds).forEach(([key, bounds]) => {
@@ -171,7 +162,7 @@ function updateMetric(key) {
   targetElement.textContent = displayMark(key, target);
   article.classList.toggle('is-not-applicable', score === null);
   controls[key].fields.forEach(field => { field.disabled = score === null; });
-  referencePickers[key].disabled = score === null;
+
   if (score === null) {
     targetElement.textContent = 'No aplicable';
     resultElement.className = 'result';
@@ -293,21 +284,6 @@ function leaveCutAfterEdit(editedField) {
   updateModeControls();
 }
 
-function chooseReference(key) {
-  const picker = referencePickers[key];
-  if (picker.value === '') return;
-  const mark = Number(picker.value);
-  if (mode === 'cut') {
-    mode = 'mine';
-    if (savedMarks) restoreMarks(savedMarks);
-    simulated = false;
-    updateModeControls();
-  }
-  controls[key].write(mark);
-  picker.value = '';
-  persistState();
-  render();
-}
 
 function openBaremo(key) {
   const { age, sex } = profile();
@@ -327,7 +303,7 @@ Object.entries(controls).forEach(([, control]) => control.fields.forEach(field =
   persistState();
   render();
 })));
-Object.keys(referencePickers).forEach(key => referencePickers[key].addEventListener('change', () => chooseReference(key)));
+
 $('#sex').addEventListener('change', () => { if (simulated) applyCut(); else persistState(); render(); });
 $('#age').addEventListener('change', () => { if (simulated) applyCut(); else persistState(); render(); });
 document.querySelectorAll('.mode').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));

@@ -24,9 +24,9 @@ const dist = path.join(root, 'dist');
   }
 
   const html = readFileSync(path.join(dist, 'index.html'), 'utf8');
-  assert.match(html, /src\/app\.js\?v=8/);
+  assert.match(html, /src\/app\.js\?v=9/);
   assert.match(html, /<title>TGCF<\/title>/);
   assert.match(html, /id="mobile-progress-label"/);
   assert.match(html, /id="profile-summary"/);
-  assert.doesNotMatch(html, /Preparación física|Tu referencia, prueba a prueba|El baremo que te corresponde/);
+  assert.doesNotMatch(html, /Preparación física|Tu referencia, prueba a prueba|El baremo que te corresponde|-[Rr]eference/);
 });

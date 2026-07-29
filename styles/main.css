@@ -21,7 +21,7 @@ button, input, select { font: inherit; }
 button { cursor: pointer; }
 .topbar { border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; padding: 16px max(20px, calc((100vw - 1180px) / 2)); background: rgba(246,244,239,.94); position: sticky; top: 0; z-index: 2; backdrop-filter: blur(12px); }
 .topbar p { margin: 0; font: 11px/1.1 var(--mono); color: var(--ink-soft); text-align: right; }
-.brand { display: flex; gap: 9px; align-items: center; color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 800; letter-spacing: .11em; }
+.brand { display: flex; gap: 9px; align-items: center; color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 800; letter-spacing: .11em; }.brand-logo { width: 38px; height: 38px; object-fit: contain; mix-blend-mode: multiply; }
 .association-logo { object-fit: contain; mix-blend-mode: multiply; }
 .source-block { align-self: end; }
 .intro-logo { display: block; width: 240px; max-width: 100%; height: auto; margin: 0 0 10px; }
@@ -46,7 +46,7 @@ dialog { width: min(620px, calc(100% - 32px)); max-height: min(720px, calc(100% 
 @media (max-width: 860px) { .intro { grid-template-columns: 1fr; min-height: 0; gap: 32px; }.source-note { width: 270px; }.profile-controls { margin-left: 0; }.objective { grid-template-columns: 1fr; gap: 16px; }.mode-copy, .simulation-actions { grid-column: 1; }.metric { grid-template-columns: 36px minmax(160px,1fr) 130px 115px; gap: 14px; padding: 18px 0; }.metric .entry { grid-column: 3; }.metric .target { grid-column: 4; }.metric .result { grid-column: 2 / 4; }.metric .baremo-button { grid-column: 4; grid-row: 3; justify-self: start; }.metric-number { padding-top: 2px; }.report { grid-template-columns: 100px 1fr; }.report-numbers { grid-column: 2; }.legal { flex-direction: column; gap: 10px; } }
 @media (max-width: 570px) { .topbar { padding: 13px 20px; }.topbar p { max-width: 130px; font-size: 9px; }.shell { width: min(100% - 28px, 1180px); }.intro { padding: 48px 0 38px; }.lede { font-size: 14px; }.setup,.objective,.measurements { padding: 30px 0; }.section-heading { grid-template-columns: 32px 1fr; gap: 11px; margin-bottom: 22px; }.measurement-note { display: none; }.profile-controls { grid-template-columns: 1fr 1fr; }.band-readout { grid-column: span 2; }.mode-switch { width: 100%; }.mode { flex: 1; padding: 0 8px; font-size: 11px; }.metric { grid-template-columns: 30px 1fr 103px; column-gap: 10px; }.metric .metric-main { grid-column: 2 / 4; }.metric .entry { grid-column: 2; }.metric .target { grid-column: 3; }.metric .result { grid-column: 2 / 4; }.metric .baremo-button { grid-column: 3; grid-row: 4; }.metric h3 { font-size: 20px; }.entry input { font-size: 14px; }.target b { font-size: 13px; }.agility-note { margin-left: 0; }.report { margin-top: 32px; grid-template-columns: 1fr; gap: 19px; padding: 24px; }.report-status { grid-template-columns: 52px 1fr; justify-items: start; align-items: center; }.status-ring { width: 46px; height: 46px; }.status-ring::after { inset: 6px; }.report-copy h2 { font-size: 25px; }.report-numbers { grid-column: 1; }.legal a { white-space: normal; } }
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { scroll-behavior: auto !important; transition: none !important; } }
-.entry-stack { display: grid; gap: 9px; }.reference-entry { display: grid; gap: 4px; color: var(--ink-soft); font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }.reference-entry select { min-height: 38px; padding: 0 32px 0 10px; font: 500 12px var(--mono); text-transform: none; letter-spacing: 0; }.metric.is-not-applicable .reference-entry select { pointer-events: none; } @media (max-width: 860px) { .metric .entry-stack { grid-column: 3; } } @media (max-width: 570px) { .metric .entry-stack { grid-column: 2; } }
+.entry-stack { display: grid; gap: 9px; } @media (max-width: 860px) { .metric .entry-stack { grid-column: 3; } } @media (max-width: 570px) { .metric .entry-stack { grid-column: 2; } }
 
 .profile-summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-left: 60px; padding: 15px 17px; background: var(--blue-pale); color: var(--ink); font: 500 14px var(--mono); }
 .profile-edit { border: 0; border-bottom: 1px solid var(--ink); padding: 5px 0; background: transparent; color: var(--ink); font: 700 11px var(--sans); }
@@ -72,8 +72,7 @@ dialog { width: min(620px, calc(100% - 32px)); max-height: min(720px, calc(100% 
   .metric-number { padding-top: 2px; }
   .metric h3 { font-size: 19px; }.metric-description { line-height: 1.35; }
   .entry-stack { gap: 8px; }.entry input { min-height: 48px; font-size: 16px; }.duration-fields input { min-height: 44px; }
-  .reference-entry { margin-top: 1px; }.reference-entry span { display: none; }.reference-entry::before { content: "Marca oficial"; color: var(--ink-soft); font: 9px var(--sans); letter-spacing: .04em; text-transform: uppercase; }
-  .reference-entry select { min-height: 36px; }
+
   .target { padding-left: 10px; }.target b { font-size: 12px; }
   .result { min-height: 26px; }
   .report { margin-bottom: 10px; }
@@ -93,10 +92,10 @@ dialog { width: min(620px, calc(100% - 32px)); max-height: min(720px, calc(100% 
   .metric .target { grid-column: 2; grid-row: 3; margin: 0; padding: 9px 0 0; border-top: 1px solid var(--line); border-left: 0; }
   .metric .result { grid-column: 3; grid-row: 3; min-height: 0; padding-top: 9px; border-top: 1px solid var(--line); text-align: right; }
   .metric .result b { font-size: 18px; }.metric .baremo-button { grid-column: 2 / 4; grid-row: 4; justify-self: start; }
-  .entry-stack .entry, .entry-stack .reference-entry { min-width: 0; }
-  .reference-entry select { width: 100%; font-size: 11px; }
-  .report { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; margin-top: 20px; padding: 17px; }
-  .report-status { grid-template-columns: 36px; gap: 3px; }.status-ring { width: 34px; height: 34px; }.status-ring::after { inset: 5px; }
-  .report-status span:last-child { font-size: 9px; }.report-copy .eyebrow, .report-copy p:last-child { display: none; }
-  .report-copy h2 { font-size: 18px; line-height: 1.08; }.report-numbers { grid-column: auto; gap: 10px; }.report-numbers dd { font-size: 17px; }
+  .entry-stack .entry { min-width: 0; }
+  .metric .entry-stack { grid-template-columns: minmax(0, 1fr); }
+  .report { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 20px; padding: 17px; }
+  .report-status { flex: 0 0 42px; grid-template-columns: 36px; gap: 3px; }.status-ring { width: 34px; height: 34px; }.status-ring::after { inset: 5px; }
+  .report-status span:last-child { font-size: 9px; }.report-copy { flex: 1 1 180px; min-width: 0; }.report-copy .eyebrow, .report-copy p:last-child { display: none; }
+  .report-copy h2 { overflow-wrap: anywhere; font-size: 18px; line-height: 1.08; }.report-numbers { flex: 1 0 100%; grid-column: auto; margin-left: 54px; gap: 10px; }.report-numbers dd { font-size: 17px; }
 }
