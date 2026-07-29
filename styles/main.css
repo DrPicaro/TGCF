@@ -15,12 +15,13 @@
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+html { max-width: 100%; overflow-x: clip; scroll-behavior: smooth; }
+body { max-width: 100%; margin: 0; overflow-x: clip; background: var(--paper); color: var(--ink); font-family: var(--sans); }
 button, input, select { font: inherit; }
 button { cursor: pointer; }
 .topbar { border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; padding: 16px max(20px, calc((100vw - 1180px) / 2)); background: rgba(246,244,239,.94); position: sticky; top: 0; z-index: 2; backdrop-filter: blur(12px); }
 .topbar p { margin: 0; font: 11px/1.1 var(--mono); color: var(--ink-soft); text-align: right; }
+.normativa-link { color: var(--ink-soft); font: 11px/1.1 var(--mono); text-align: right; text-decoration: none; }.normativa-link::after { content: " ↗"; color: var(--coral); }.normativa-link:focus-visible, .normativa-link:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--coral); text-underline-offset: 4px; }
 .brand { display: flex; gap: 10px; align-items: center; color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 800; letter-spacing: .11em; }.brand-logo { width: 44px; height: 44px; object-fit: contain; mix-blend-mode: multiply; }
 .association-logo { object-fit: contain; mix-blend-mode: multiply; }
 .source-block { align-self: end; }
@@ -85,21 +86,22 @@ dialog { width: min(620px, calc(100% - 32px)); max-height: min(720px, calc(100% 
 .profile-summary, .profile-details { margin-left: 0; }
 
 @media (max-width: 570px) {
-  .setup { padding: 12px 0 8px; }.objective { padding: 8px 0 12px; }.measurements { padding: 12px 0 14px; }
-  .brand-logo { width: 42px; height: 42px; }
-  .metric { grid-template-columns: 26px minmax(0, 1fr) minmax(78px, .68fr); row-gap: 7px; margin-bottom: 8px; padding: 12px 10px; }
+  .topbar { gap: 10px; padding: 8px 16px; overflow: hidden; }.brand { flex: none; }.brand-logo { width: 40px; height: 40px; }.normativa-link { flex: 0 1 170px; min-width: 0; overflow: hidden; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+  .setup { padding: 8px 0 6px; }.objective { padding: 6px 0 8px; }.measurements { padding: 8px 0 10px; }
+  .profile-summary { min-height: 46px; padding: 8px 12px; }.mode-switch { min-height: 44px; overflow: hidden; }.mode { min-width: 0; padding: 0 5px; font-size: 10px; white-space: nowrap; }
+  .metric { grid-template-columns: 24px minmax(0, 1fr) 76px; column-gap: 7px; row-gap: 5px; margin-bottom: 6px; padding: 9px 9px; }
   .metric .metric-main { display: grid; grid-column: 2 / 4; grid-template-columns: minmax(0, 1fr) auto; align-items: end; column-gap: 8px; }
-  .metric .metric-main h3 { grid-column: 1; grid-row: 1; font-size: 18px; }
+  .metric .metric-main h3 { grid-column: 1; grid-row: 1; font-size: 17px; }
   .metric .metric-kicker { grid-column: 2; grid-row: 1; max-width: 104px; margin: 0; font-size: 8px; line-height: 1.2; text-align: right; }
   .metric .entry-stack { display: block; grid-column: 2; grid-row: 2; min-width: 0; }
-  .metric .target { grid-column: 3; grid-row: 2; align-self: end; min-height: 43px; margin: 0; padding: 5px 0 0 8px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
-  .metric .result { grid-column: 2 / 4; grid-row: 3; min-height: 0; padding-top: 6px; border-top: 1px solid var(--line); text-align: right; }
-  .metric .result b { display: inline; margin-right: 6px; font-size: 15px; }.metric .baremo-button { grid-column: 2 / 4; grid-row: 4; padding: 2px 0; justify-self: start; }
-  .entry-stack .entry { min-width: 0; }
-  .metric .entry { gap: 2px; }.metric .entry input { min-height: 43px; }.metric .entry small { white-space: nowrap; font-size: 8px; }
-  .duration-fields { gap: 3px; }.duration-fields input { min-height: 40px; padding: 0 6px; }.duration-separator { padding-bottom: 9px; }
+  .metric .target { grid-column: 3; grid-row: 2; align-self: end; min-height: 39px; margin: 0; padding: 4px 0 0 7px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .metric .result { grid-column: 2 / 4; grid-row: 3; min-height: 0; padding-top: 5px; border-top: 1px solid var(--line); text-align: right; }
+  .metric .result b { display: inline; margin-right: 5px; font-size: 14px; }.metric .baremo-button { grid-column: 2 / 4; grid-row: 3; align-self: end; padding: 1px 0; justify-self: start; }
+  .metric, .metric-main, .entry-stack, .duration-fields, .entry-stack .entry { min-width: 0; max-width: 100%; }
+  .metric .entry { gap: 1px; }.metric .entry input { min-height: 39px; }.metric .entry small { overflow-wrap: anywhere; white-space: normal; font-size: 8px; }
+  .duration-fields { gap: 2px; }.duration-fields input { min-height: 37px; padding: 0 5px; }.duration-separator { padding-bottom: 8px; }
   .report { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 20px; padding: 17px; }
   .report-status { flex: 0 0 42px; grid-template-columns: 36px; gap: 3px; }.status-ring { width: 34px; height: 34px; }.status-ring::after { inset: 5px; }
   .report-status span:last-child { font-size: 9px; }.report-copy { flex: 1 1 180px; min-width: 0; }.report-copy .eyebrow, .report-copy p:last-child { display: none; }
-  .report-copy h2 { overflow-wrap: anywhere; font-size: 18px; line-height: 1.08; }.report-numbers { flex: 1 0 100%; grid-column: auto; margin-left: 54px; gap: 10px; }.report-numbers dd { font-size: 17px; }
+  .report-copy h2 { overflow-wrap: anywhere; font-size: 18px; line-height: 1.08; }.report-numbers { flex: 1 0 calc(100% - 42px); grid-column: auto; max-width: calc(100% - 42px); margin-left: 42px; gap: 10px; }.report-numbers dd { font-size: 17px; }
 }
