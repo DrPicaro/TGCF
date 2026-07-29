@@ -80,3 +80,23 @@ dialog { width: min(620px, calc(100% - 32px)); max-height: min(720px, calc(100% 
   .mobile-summary { position: fixed; right: 14px; bottom: 12px; left: 14px; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 54px; padding: 0 16px; border: 1px solid var(--ink); border-radius: 3px; background: var(--ink); color: #f9f5ec; box-shadow: 0 8px 28px #162b3c33; font: 11px var(--mono); }
   .mobile-summary a { border-bottom: 1px solid var(--coral); color: #f9f5ec; text-decoration: none; font: 700 11px var(--sans); }
 }
+
+/* Mobile-first simulator: open directly on the controls, not an editorial landing page. */
+.setup { padding: 24px 0; }.objective { display: block; padding: 16px 0; }.measurements { padding-top: 24px; }
+.profile-summary, .profile-details { margin-left: 0; }
+
+@media (max-width: 570px) {
+  .setup { padding: 18px 0 12px; }.objective { padding: 12px 0 18px; }.measurements { padding: 18px 0 20px; }
+  .metric { grid-template-columns: 28px minmax(0, 1fr) minmax(0, 1fr); row-gap: 12px; }
+  .metric .metric-main { grid-column: 2 / 4; }
+  .metric .entry-stack { grid-column: 2 / 4; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; gap: 10px; }
+  .metric .target { grid-column: 2; grid-row: 3; margin: 0; padding: 9px 0 0; border-top: 1px solid var(--line); border-left: 0; }
+  .metric .result { grid-column: 3; grid-row: 3; min-height: 0; padding-top: 9px; border-top: 1px solid var(--line); text-align: right; }
+  .metric .result b { font-size: 18px; }.metric .baremo-button { grid-column: 2 / 4; grid-row: 4; justify-self: start; }
+  .entry-stack .entry, .entry-stack .reference-entry { min-width: 0; }
+  .reference-entry select { width: 100%; font-size: 11px; }
+  .report { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; margin-top: 20px; padding: 17px; }
+  .report-status { grid-template-columns: 36px; gap: 3px; }.status-ring { width: 34px; height: 34px; }.status-ring::after { inset: 5px; }
+  .report-status span:last-child { font-size: 9px; }.report-copy .eyebrow, .report-copy p:last-child { display: none; }
+  .report-copy h2 { font-size: 18px; line-height: 1.08; }.report-numbers { grid-column: auto; gap: 10px; }.report-numbers dd { font-size: 17px; }
+}

@@ -265,9 +265,6 @@ function updateModeControls() {
     button.classList.toggle('active', active);
     button.setAttribute('aria-pressed', String(active));
   });
-  $('#mode-copy').textContent = mode === 'cut'
-    ? 'Estos son los mínimos oficiales: 20 puntos en cada prueba aplicable según sexo y edad.'
-    : 'Introduce tus marcas. La aplicación compara cada una con el corte de 20 puntos.';
 }
 
 function setMode(nextMode) {

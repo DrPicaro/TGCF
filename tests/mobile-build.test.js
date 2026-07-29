@@ -28,5 +28,5 @@ const dist = path.join(root, 'dist');
   assert.match(html, /<title>TGCF<\/title>/);
   assert.match(html, /id="mobile-progress-label"/);
   assert.match(html, /id="profile-summary"/);
-  assert.match(html, /assets\/logo-mcf\.png/);
+  assert.doesNotMatch(html, /Preparación física|Tu referencia, prueba a prueba|El baremo que te corresponde/);
 });
