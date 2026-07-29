@@ -1,7 +1,7 @@
 # Ficha de tienda · TGCF
 
 ## Nombre
-TGCF · Evaluación física
+TGCF
 
 ## Descripción corta
 Consulta los baremos oficiales y calcula tu aptitud prueba a prueba.
@@ -9,8 +9,8 @@ Consulta los baremos oficiales y calcula tu aptitud prueba a prueba.
 ## Descripción larga
 TGCF es una herramienta de consulta y cálculo orientativo para la evaluación física periódica de las Fuerzas Armadas.
 
-- Consulta el baremo que corresponde a tu sexo y edad.
-- Introduce tus marcas o selecciona referencias oficiales.
+- Configura tu perfil de sexo y edad.
+- Introduce tus marcas y consulta el corte aplicable.
 - Comprueba el corte de 20 puntos de cada prueba aplicable.
 - Revisa el resultado completo sin compensar una prueba con otra.
 - Guarda tus datos localmente en el dispositivo.
@@ -35,3 +35,5 @@ Educación / Herramientas
 - Completar clasificación de contenido.
 - Completar los formularios de privacidad de Google Play y App Store Connect.
 - Revisar el texto legal con MCF.
+- Generar y custodiar fuera del repositorio la clave de firma Android release.
+- Crear AAB firmado y probarlo primero en el canal de pruebas internas de Google Play.

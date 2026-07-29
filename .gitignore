@@ -3,6 +3,11 @@ tgcf-evaluacion-fisica.zip
 dist/
 inst_user_settings.tmp
 
+# Firma Android: mantener siempre fuera del repositorio
+android/keystore.properties
+*.jks
+*.keystore
+
 # Dependencias y registros
 node_modules/
 npm-debug.log*
