@@ -1,6 +1,7 @@
 # Paquetes locales de distribución
 tgcf-evaluacion-fisica.zip
 dist/
+inst_user_settings.tmp
 
 # Dependencias y registros
 node_modules/

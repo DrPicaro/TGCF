@@ -13,6 +13,7 @@ const dist = path.join(root, 'dist');
 
   for (const relativePath of [
     'index.html',
+    'privacy.html',
     'styles/main.css',
     'src/app.js',
     'src/calculator.js',
