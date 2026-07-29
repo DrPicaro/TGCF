@@ -25,5 +25,8 @@ const dist = path.join(root, 'dist');
 
   const html = readFileSync(path.join(dist, 'index.html'), 'utf8');
   assert.match(html, /src\/app\.js\?v=8/);
+  assert.match(html, /<title>TGCF<\/title>/);
+  assert.match(html, /id="mobile-progress-label"/);
+  assert.match(html, /id="profile-summary"/);
   assert.match(html, /assets\/logo-mcf\.png/);
 });

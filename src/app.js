@@ -222,14 +222,37 @@ function updateReport(results) {
   return { complete: true, status: reportStatus, average: averageText, results };
 }
 
+function updateProfileSummary() {
+  const { age, sex } = profile();
+  const sexLabel = sex === 'F' ? 'Mujer' : 'Hombre';
+  const band = ageBands[ageBandIndex(age)] ?? 'tramo no disponible';
+  $('#profile-summary').textContent = `${sexLabel} · ${age} años · tramo ${band}`;
+}
+
+function updateMobileSummary(results) {
+  const applicable = Object.values(results).filter(item => item.applicable);
+  const complete = applicable.filter(item => item.score !== null).length;
+  const label = $('#mobile-progress-label');
+  const link = $('#mobile-report-link');
+  if (latestReport.complete) {
+    label.textContent = `${latestReport.status} · Media ${latestReport.average}`;
+    link.textContent = 'Ver informe';
+  } else {
+    label.textContent = `${complete} de ${applicable.length} pruebas completas`;
+    link.textContent = complete > 0 ? 'Ver progreso' : 'Ver informe';
+  }
+}
+
 function render() {
   try {
     const band = ageBandIndex(profile().age);
     $('#age-band').textContent = ageBands[band];
   } catch { $('#age-band').textContent = 'Edad no válida'; }
+  updateProfileSummary();
   const results = Object.fromEntries(Object.keys(tests).map(key => [key, updateMetric(key)]));
   $('#agility-note').hidden = results.agility.applicable;
   latestReport = updateReport(results);
+  updateMobileSummary(results);
 }
 
 function applyCut() {
@@ -312,6 +335,11 @@ $('#sex').addEventListener('change', () => { if (simulated) applyCut(); else per
 $('#age').addEventListener('change', () => { if (simulated) applyCut(); else persistState(); render(); });
 document.querySelectorAll('.mode').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
 document.querySelectorAll('.baremo-button').forEach(button => button.addEventListener('click', () => openBaremo(button.dataset.baremo)));
+$('.profile-edit').addEventListener('click', () => {
+  const details = $('#profile-details');
+  details.open = !details.open;
+  if (details.open) details.querySelector('select').focus();
+});
 $('#close-dialog').addEventListener('click', () => $('#baremo-dialog').close());
 $('#baremo-dialog').addEventListener('click', event => { if (event.target === $('#baremo-dialog')) $('#baremo-dialog').close(); });
 

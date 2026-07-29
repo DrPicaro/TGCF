@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#162b3c">
-  <title>Aptitud · Evaluación física</title>
+  <title>TGCF</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
@@ -12,10 +12,8 @@
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="#inicio" aria-label="TGCF, inicio · Asociación Profesional Militares con Futuro">
-      <span>TGCF</span>
-    </a>
-    <p>Evaluación periódica · Anexo II</p>
+    <a class="brand" href="#inicio" aria-label="TGCF, inicio"><span>TGCF</span></a>
+    <p>Evaluación física · Anexo II</p>
   </header>
 
   <main id="inicio" class="shell">
@@ -27,10 +25,11 @@
       </div>
       <div class="source-block">
         <img class="association-logo intro-logo" src="assets/logo-mcf.png" alt="Logo de la Asociación Profesional Militares con Futuro">
-        <aside class="source-note">
-          <span class="source-dot" aria-hidden="true"></span>
-          <div><b>Normativa oficial · Orden DEF/15/2026</b><br><a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-1379" target="_blank" rel="noopener" aria-label="Consultar la Orden DEF/15/2026 en el BOE; se abre en una pestaña nueva">Consultar la Orden en el BOE <span aria-hidden="true">↗</span></a><small>Se abrirá la publicación oficial con los baremos completos.</small></div>
-        </aside>
+        <details class="source-note">
+          <summary><span class="source-dot" aria-hidden="true"></span><b>Normativa oficial · Orden DEF/15/2026</b></summary>
+          <a href="https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-1379" target="_blank" rel="noopener" aria-label="Consultar la Orden DEF/15/2026 en el BOE; se abre en una pestaña nueva">Consultar la Orden en el BOE <span aria-hidden="true">↗</span></a>
+          <small>Se abrirá la publicación oficial con los baremos completos.</small>
+        </details>
       </div>
     </section>
 
@@ -39,18 +38,22 @@
         <span class="step">01</span>
         <div><p class="eyebrow">Perfil</p><h2 id="perfil-title">El baremo que te corresponde</h2></div>
       </div>
-      <div class="profile-controls">
-        <label>Sexo
-          <select id="sex" aria-label="Sexo">
-            <option value="M">Hombre</option>
-            <option value="F">Mujer</option>
-          </select>
-        </label>
-        <label>Edad
-          <select id="age" aria-label="Edad" aria-describedby="age-band"></select>
-        </label>
-        <div class="band-readout"><span>Tramo aplicado</span><b id="age-band">26–30 años</b></div>
-      </div>
+      <div class="profile-summary" aria-live="polite"><span id="profile-summary">Hombre · 30 años · tramo 26–30 años</span><button class="profile-edit" type="button" aria-controls="profile-details">Cambiar perfil</button></div>
+      <details id="profile-details" class="profile-details">
+        <summary>Editar sexo y edad</summary>
+        <div class="profile-controls">
+          <label>Sexo
+            <select id="sex" aria-label="Sexo">
+              <option value="M">Hombre</option>
+              <option value="F">Mujer</option>
+            </select>
+          </label>
+          <label>Edad
+            <select id="age" aria-label="Edad" aria-describedby="age-band"></select>
+          </label>
+          <div class="band-readout"><span>Tramo aplicado</span><b id="age-band">26–30 años</b></div>
+        </div>
+      </details>
     </section>
 
     <section class="objective" aria-labelledby="objetivo-title">
@@ -112,12 +115,17 @@
       <p id="agility-note" class="agility-note" hidden>El circuito no se muestra para este tramo de edad en el Anexo II.</p>
     </section>
 
-    <section class="report" aria-labelledby="informe-title">
+    <section id="report" class="report" aria-labelledby="informe-title">
       <div class="report-status waiting" id="report-status"><span class="status-ring" aria-hidden="true"></span><span id="status-word">PENDIENTE</span></div>
       <div class="report-copy"><p class="eyebrow">Informe de aptitud</p><h2 id="informe-title">Completa las marcas para obtener el resultado.</h2><p id="report-detail">La calificación de referencia exige al menos 20 puntos en cada prueba aplicable. La media no compensa una prueba inferior al corte.</p></div>
       <dl class="report-numbers"><div><dt>Media</dt><dd id="average">—</dd></div><div><dt>Pruebas</dt><dd id="passed-count">—</dd></div></dl>
 
     </section>
+
+    <div class="mobile-summary" aria-live="polite">
+      <span id="mobile-progress-label">0 de 4 pruebas completas</span>
+      <a href="#report" id="mobile-report-link">Ver informe</a>
+    </div>
 
     <section class="legal">
       <p><b>Uso orientativo.</b> La aplicación calcula sobre las tablas del Anexo II. Las condiciones de una convocatoria, destino o unidad pueden establecer requisitos adicionales. <a href="privacy.html">Política de privacidad</a></p>
